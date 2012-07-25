@@ -106,4 +106,19 @@ describe('EventEmitter', function() {
 
   });
 
+  describe('nested callback', function() {
+     
+     it('should execute at the end listener added inside listener', function() {
+      var spy1 = sinon.spy();
+      var spy2 = sinon.spy();
+
+      ee.on('foo', function() {
+        ee.on('foo', spy2);
+      });
+      ee.on('foo', spy1);
+      ee.emit('foo');
+      expect(spy1).to.have.been.calledBefore(spy2);
+     });
+  });
+
 });
