@@ -1,0 +1,21 @@
+{
+  "author": "",
+  "name": "eventually",
+  "description": "Event based utilities",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kadoh/eventually.git"
+  },
+  "engines": {
+    "node": ">=0.4.12"
+  },
+   "main" : "index.js",
+  "dependencies": {},
+  "devDependencies": {
+      "mocha"          : "~1.0"
+    , "chai"           : "~1.0"
+    , "sinon-chai"     : "~2.1"
+    , "sinon"          : "~1.3"
+  }
+}
