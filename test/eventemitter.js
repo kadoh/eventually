@@ -21,11 +21,6 @@ describe('EventEmitter', function() {
   });
 
   describe('when i add a listener', function() {
-    it('should be added to the listeners', function() {
-      var noop = function(){};
-      ee.on('foo', noop);
-      expect(ee._events.foo.listeners.length).to.equal(1);
-    });
 
     describe('and when I fire the associated event with arguments', function() {
       it('should have been called with the right arguments', function() {
