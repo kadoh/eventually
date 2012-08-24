@@ -21,12 +21,10 @@ describe('EventEmitter', function() {
   });
 
   describe('when i add a listener', function() {
-
-    it('should be added to the event queue', function() {
-      ee.on('foo', spy);
-      expect(typeof ee._events.foo).to.be.ok;
-      var evt = ee._events.foo.callbacks[ee._events.foo.callbacks.length - 1];
-      expect(evt.listener).to.equal(spy);
+    it('should be added to the listeners', function() {
+      var noop = function(){};
+      ee.on('foo', noop);
+      expect(ee._events.foo.listeners.length).to.equal(1);
     });
 
     describe('and when I fire the associated event with arguments', function() {
@@ -37,15 +35,47 @@ describe('EventEmitter', function() {
       });
     });
 
-    it('should be removable', function() {
+    it('should be removable wiht off', function() {
       ee.on('foo', spy);
-      ee.removeListener('foo', spy);
+      ee.off('foo', spy);
       ee.emit('foo');
       expect(spy).to.not.have.been.called;
     });
+
+    describe('when i add other vents', function() {
+      var spy2, spy3;
+
+      beforeEach(function() {
+        spy2 = sinon.spy();
+        spy3 = sinon.spy();
+
+        ee.on('foo', spy);
+        ee.on('foo', spy2);
+        ee.on('bar', spy3);
+      });
+
+      it('should possible to shut all foo', function() {
+        ee.offAll('foo');
+        ee.emit('foo');
+        ee.emit('bar');
+        expect(spy).to.not.have.been.called;
+        expect(spy2).to.not.have.been.called;
+        expect(spy3).to.have.been.called;
+      });
+
+      it('should possible to shut all', function() {
+        ee.offAll();
+        ee.emit('foo');
+        ee.emit('bar');
+        expect(spy).to.not.have.been.called;
+        expect(spy2).to.not.have.been.called;
+        expect(spy3).to.not.have.been.called;
+      });
+    });
   });
 
-  describe('when i add a one time listener and I fire the event 2 times', function() {
+  describe('when i add a one time listener and I fire the event 2 times',
+    function() {
     it('the listener should have been called only one time', function() {
       ee.once('foo', spy);
       ee.emit('foo').emit('foo');
@@ -53,14 +83,39 @@ describe('EventEmitter', function() {
     });
   });
 
-  describe('when i add a listener specifying the scope and i fire the event', function() {
-
+  describe('when i add a listener specifying the scope and i fire the event',
+    function() {
     var that = {};
 
     it('should have bee called with the appropriate scope', function() {
       ee.once('foo', spy, that);
       ee.emit('foo');
       expect(spy).to.have.been.calledOn(that);
+    });
+  });
+
+  describe('when i add 2 listeners for one event and fire it', function() {
+    var spy2;
+
+    beforeEach(function() {
+      spy2 = sinon.spy();
+    });
+
+    it('should be called in the order of add', function() {
+      ee.on('foo', spy);
+      ee.on('foo', spy2);
+      ee.emit('foo');
+
+      expect(spy).to.have.been.calledBefore(spy2);
+    });
+
+    it('unless I add the secon one with the \'unshift\' option', function() {
+      ee.on('foo', spy);
+      ee.on('foo', spy2, undefined, {unshift : true});
+      ee.emit('foo');
+
+      expect(spy).to.have.been.calledAfter(spy2);
+
     });
   });
 
@@ -81,44 +136,49 @@ describe('EventEmitter', function() {
       ee.emit('empty');
       expect(spy).to.have.been.calledTwice;
     });
-
   });
 
-  describe('chain of events', function() {
-    
-    var that = {};
+  describe('when a handler throws an error', function() {
+    var error = new Error();
+    var thrower = function() {
+      throw error;
+    };
 
-    it('should be possible to add chain of events', function() {
-      var fooSpy = sinon.spy();
-      var barSpy = sinon.spy();
-      var chain = {
-        foo: fooSpy,
-        bar: barSpy
-      };
-      ee.on(chain, that);
-      ee.emit('foo');
-      expect(fooSpy).to.have.been.calledOnce;
-      expect(fooSpy).to.have.been.calledOn(that);
-      ee.emit('bar');
-      expect(barSpy).to.have.been.calledOnce;
-      expect(barSpy).to.have.been.calledOn(that);
+    beforeEach(function() {
+      ee.on('foo', thrower);
     });
 
-  });
+    describe('if no listener on the error chanel', function() {
+      it('should simply throw', function() {
+        expect(function() {
+          ee.emit('foo');
+        }).throws(Error);
+      });
+    });
 
-  describe('nested callback', function() {
-     
-     it('should execute at the end listener added inside listener', function() {
-      var spy1 = sinon.spy();
-      var spy2 = sinon.spy();
-
-      ee.on('foo', function() {
+    describe('if listeners on the error chanel', function() {
+      var spy2;
+      beforeEach(function() {
+        ee.on('error', spy);
+        spy2 = sinon.spy();
         ee.on('foo', spy2);
       });
-      ee.on('foo', spy1);
-      ee.emit('foo');
-      expect(spy1).to.have.been.calledBefore(spy2);
-     });
-  });
 
+      it('should not throw', function() {
+        expect(function() {
+          ee.emit('foo');
+        }).not.throws();
+      });
+
+      it('but should emit error', function() {
+        ee.emit('foo');
+        expect(spy).to.have.been.calledWith(error);
+      });
+
+      it('should follow the call of next listeners', function() {
+        ee.emit('foo');
+        expect(spy2).to.have.been.called;
+      });
+    });
+  });
 });
