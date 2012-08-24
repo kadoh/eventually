@@ -78,11 +78,11 @@ describe('EventEmitter', function() {
     });
   });
 
-  describe('when i add a listener specifying the scope and i fire the event',
+  describe('when i add a listener specifying the context and i fire the event',
     function() {
     var that = {};
 
-    it('should have bee called with the appropriate scope', function() {
+    it('should have bee called with the appropriate context', function() {
       ee.once('foo', spy, that);
       ee.emit('foo');
       expect(spy).to.have.been.calledOn(that);
