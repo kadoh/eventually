@@ -1,3 +1,8 @@
-module.exports = process.env.EVENTUALLY_COV
-  ? require('./lib-cov/eventually')
-  : require('./lib/eventually');
+exports.EventEmitter = require('./lib/eventemitter')
+                       .EventEmitter;
+
+exports.StateEventEmitter = require('./lib/state-eventemitter')
+                            .StateEventEmitter;
+
+exports.Promise = require('./lib/promise')
+                  .Promise;
