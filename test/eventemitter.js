@@ -3,11 +3,13 @@ var chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect;
 
+var cov = process.env.NODE_COV ? '-cov' : '';
+
 chai.use(sinonChai);
 
 describe('EventEmitter', function() {
 
-  var EventEmitter = require('../index').EventEmitter,
+  var EventEmitter = require('../index'+cov).EventEmitter,
       ee, spy;
 
   beforeEach(function() {

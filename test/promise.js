@@ -3,11 +3,13 @@ var chai = require('chai'),
     sinon = require('sinon'),
     expect = chai.expect;
 
+var cov = process.env.NODE_COV ? '-cov' : '';
+
 chai.use(sinonChai);
 
 describe('Promise', function() {
 
-  var Promise = require('../index').Promise,
+  var Promise = require('../index'+cov).Promise,
       pro, success, failure, progress;
 
   beforeEach(function() {
