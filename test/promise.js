@@ -103,6 +103,43 @@ describe('Promise', function() {
 
   });
 
+  describe('in progress state', function() {
+    describe('#inProgres', function() {
+      it('should return true', function() {
+        expect(pro.inProgress()).to.be.truthy;
+      });
+    });
+  });
+
+  describe('#always', function() {
+    var spy;
+
+    beforeEach(function() {
+      spy = sinon.spy();
+      pro.always(spy);
+    });
+
+    describe('in reject state', function() {
+      beforeEach(function() {
+        pro.reject(new Error());
+      });
+
+      it('should call always', function() {
+        expect(spy).to.have.been.called;
+      });
+    });
+
+    describe('in resolve state', function() {
+      beforeEach(function() {
+        pro.resolve('hi');
+      });
+
+      it('should call always', function() {
+        expect(spy).to.have.been.called;
+      });
+    });
+  });
+
   describe('context of execution', function() {
 
     var that = {};
