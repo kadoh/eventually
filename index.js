@@ -6,3 +6,6 @@ exports.StateEventEmitter = require('./lib/state-eventemitter')
 
 exports.Promise = require('./lib/promise')
                   .Promise;
+
+exports.IterativePromise = require('./lib/iterative-promise')
+                  .IterativePromise;
