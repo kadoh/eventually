@@ -176,4 +176,26 @@ describe('EventEmitter', function() {
       });
     });
   });
+
+  describe('chain of events', function() {
+    
+    var that = {};
+
+    it('should be possible to add chain of events', function() {
+      var fooSpy = sinon.spy();
+      var barSpy = sinon.spy();
+      var chain = {
+        foo: fooSpy,
+        bar: barSpy
+      };
+      ee.on(chain, that);
+      ee.emit('foo');
+      expect(fooSpy).to.have.been.calledOnce;
+      expect(fooSpy).to.have.been.calledOn(that);
+      ee.emit('bar');
+      expect(barSpy).to.have.been.calledOnce;
+      expect(barSpy).to.have.been.calledOn(that);
+    });
+
+  });
 });
