@@ -143,11 +143,11 @@ describe('EventEmitter', function() {
       ee.on('foo', thrower);
     });
 
-    describe('if no listener on the error chanel', function() {
+    describe('if no listener on the error channel', function() {
       it('should simply throw', function() {
         expect(function() {
           ee.emit('foo');
-        }).throws(Error);
+        }).throws(error);
       });
     });
 
