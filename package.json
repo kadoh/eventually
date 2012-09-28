@@ -1,5 +1,7 @@
 {
-  "author": "",
+  "contributors": [
+  "alexstrat", "jinroh"
+  ],
   "name": "eventually",
   "description": "Event based utilities",
   "version": "0.0.0",
