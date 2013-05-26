@@ -2,4 +2,4 @@ language: node_js
 script: "make travis-test"
 node_js:
   - 0.8
-  - 0.6
+  - 0.10
