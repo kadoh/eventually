@@ -13,7 +13,7 @@ test-cov: lib-cov
 	@NODE_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
 
 test-coveralls: lib-cov
-	@NODE_COV=1 $(MAKE) test REPORTER=coveralls-mocha-reporter
+	@NODE_COV=1 $(MAKE) test REPORTER=mocha-coveralls-reporter
 
 lib-cov:
 	@rm -rf lib-cov
