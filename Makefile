@@ -1,4 +1,3 @@
-MOCHA_OPTS=
 REPORTER = spec
 
 check: test
@@ -8,11 +7,16 @@ test:
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
+travis-test: test-coveralls test
+
 test-cov: lib-cov
 	@NODE_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
+
+test-coveralls: lib-cov
+	@NODE_COV=1 $(MAKE) test REPORTER=coveralls-mocha-reporter
 
 lib-cov:
 	@rm -rf lib-cov
 	@jscoverage lib lib-cov
 
-.PHONY: test lib-cov test-cov
+.PHONY: test lib-cov test-cov travis-test
